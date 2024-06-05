@@ -16,13 +16,13 @@
           <div>
                 <span v-for="questionNumber in questionsCount" :key="questionNumber">
                   <button @click="gotoQuestion(questionNumber)"
-                          :class="[{active: isQuestionActive(questionNumber)}, {answered: isQuestionAnswered(questionNumber)}]"> {{ questionNumber
+                          :class="[{active: isQuestionActive(questionNumber)}, {answered: isQuestionAnswered(questionNumber)}, {flagged: isQuestionFlagged(questionNumber)}]"> {{ questionNumber
                     }}</button>
                 </span>
           </div>
         </div>
         <div class="flag">
-          <button class="flag-button">
+          <button class="flag-button" @click="switchQuestionFlag">
             <strong>Flag Question</strong>
           </button>
         </div>
@@ -60,7 +60,8 @@ export default {
   data() {
     return {
       message: null,
-      secondsLeft: 0
+      secondsLeft: 0,
+      flaggedQuestions: []
     };
   },
   computed: {
@@ -96,7 +97,7 @@ export default {
     },
     isLastChapter() {
       return this.$store.getters.chapterIndex >= this.$store.getters.chaptersCount - 1;
-    },
+    }
   },
   methods: {
     switchInstructionsVisibility() {
@@ -112,6 +113,17 @@ export default {
         return Object.keys(chapterResults).includes(question.id.toString());
       }
       return false;
+    },
+    isQuestionFlagged(questionNumber) {
+      return this.flaggedQuestions.includes(questionNumber - 1);
+    },
+    switchQuestionFlag() {
+      const ind = this.flaggedQuestions.findIndex((questionIndex) => questionIndex === this.questionIndex);
+      if (ind >= 0) {
+        delete this.flaggedQuestions[ind];
+      } else {
+        this.flaggedQuestions.push(this.questionIndex);
+      }
     },
     gotoQuestion(questionNumber) {
       this.$store.dispatch('gotoQuestion', questionNumber - 1);
@@ -143,8 +155,8 @@ export default {
   watch: {
     isChapterLoaded(val) {
       if (val === true) {
-        const chapterTimeOut = this.$store.getters.chapterTimeOut;
-        this.secondsLeft = chapterTimeOut;
+        this.flaggedQuestions = [];
+        this.secondsLeft = this.$store.getters.chapterTimeOut;
         if (int) {
           clearInterval(int);
         }
@@ -230,6 +242,24 @@ export default {
 
 .button-groups button.active.answered {
   background: transparent url(/assets/icons/button_active_answered.svg) 0 0 no-repeat;
+  color: #000;
+}
+
+.button-groups button.active.flagged {
+  background: transparent url(/assets/icons/button_active_flagged.svg) 0 0 no-repeat;
+}
+
+.button-groups button.flagged {
+  background-image: url(/assets/icons/button_flagged.svg);
+}
+
+.button-groups button.answered.active.flagged {
+  background: transparent url(/assets/icons/button_active_answered_flagged.svg) 0 0 no-repeat;
+  color: #000;
+}
+
+.button-groups button.answered.flagged {
+  background: transparent url(/assets/icons/button_answered_flagged.svg) 0 0 no-repeat;
   color: #000;
 }
 
