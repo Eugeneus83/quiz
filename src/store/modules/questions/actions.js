@@ -47,11 +47,20 @@ export default {
         answers: {}
       };
 
-      if (questionText) {
+      let currentQuestionText = questionText;
+
+      const highlights = item.details.highlights;
+      if (highlights) {
+        for (const highlight of highlights) {
+          currentQuestionText = currentQuestionText.replace(highlight.text, `<span id="ref${highlight.index}">${highlight.text}</span>`);
+        }
+      }
+
+      if (currentQuestionText) {
         if (+itemIndex === 0) {
           continue;
         }
-        question.text = questionText;
+        question.text = currentQuestionText;
       }
 
       questionNumber++;
