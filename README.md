@@ -1,2 +1,2 @@
 ## Demo
-http://quiz.yevhenlysenko.pro/
+http://quiz.yevhenlysenko.org/

@@ -4,7 +4,7 @@ export default {
     const chapterNumber = context.getters.chapterIndex + 1;
     let response;
     try {
-      response = await fetch(`https://wp.yevhenlysenko.pro/quiz/chapter${chapterNumber}.json`);
+      response = await fetch(`/chapters/chapter${chapterNumber}.json`);
     } catch (error) {
       throw new Error(error.message);
     }
